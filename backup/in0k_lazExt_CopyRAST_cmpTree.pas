@@ -299,7 +299,7 @@ begin
             else result:=cSrcTREE_img_file;
             {todo:}
         end }
-    end; }
+    end;
 end;
 
 function tCmp_CopyRAST_Tree._item_hint_(const item:tSrcTree_item):string;
