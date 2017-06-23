@@ -5,6 +5,8 @@ unit in0k_lazExt_CopyRAST_cmpTree;
 interface
 
 uses Controls, ComCtrls, Forms,
+
+     LCLVersion,
      PackageIntf,
      IDEImagesIntf,
 
@@ -12,6 +14,7 @@ uses Controls, ComCtrls, Forms,
    // in0k_lazIdeSRC_srcTree_CORE_itemFileSystem,
     in0k_lazIdeSRC_srcTree_item_Globals,
     in0k_lazIdeSRC_srcTree_item_fsFolder,
+    in0k_lazIdeSRC_srcTree_item_fsFile,
     //---
 
 
@@ -112,7 +115,7 @@ var
 
 procedure _do_reLoad_imageIndexs_Commons_;
 begin
-    cSrcTREE_img_BaseDIR:=IDEImages.LoadImage(16, 'pkg_files'); {done: пока эта картинка вроже подходит по смыслу}
+  {  cSrcTREE_img_BaseDIR:=IDEImages.LoadImage(16, 'pkg_files'); {done: пока эта картинка вроже подходит по смыслу}
     cSrcTREE_img_SnglDIR:=IDEImages.LoadImage(16, 'folder');
     cSrcTREE_img_SrchPTH:=IDEImages.LoadImage(16, 'menu_search_files');
     //---
@@ -127,41 +130,25 @@ begin
     cSrcTREE_img_file_BIN    := IDEImages.LoadImage(16, 'pkg_binary');
 
     //---
-   _CRT_img_Commons__isLoaded_:=TRUE;
-end;
-
-const
-  _cImgName__Package_='item_package';
-  _cImgName__PckFILE_='pkg_open';
-  _cImgName__Project_='item_project';
-  _cImgName__PrjFILE_='menu_project_viewsource';
-
-  _cImgName__BaseDIR_='pkg_files';
-  _cImgName__SnglDIR_='folder';
-  _cImgName__SrchPTH_='menu_search_files';
-
-
-function _do_getIdxImj4IdeImages_(const fName:string):integer;
-begin
-   result:=IDEImages.LoadImage(16,fName);
+   _CRT_img_Commons__isLoaded_:=TRUE; }
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 procedure _do_reLoad_imageIndexs4Package_;
 begin
-    cSrcTREE_img_Package:=IDEImages.LoadImage(16, 'item_package');
+ {   cSrcTREE_img_Package:=IDEImages.LoadImage(16, 'item_package');
     cSrcTREE_img_PckFILE:=IDEImages.LoadImage(16, 'pkg_open');
     //---
-   _CRT_img4Package__isLoaded_:=TRUE;
+   _CRT_img4Package__isLoaded_:=TRUE;  }
 end;
 
 procedure _do_reLoad_imageIndexs4Project_;
 begin
-    cSrcTREE_img_Project:=IDEImages.LoadImage(16, 'item_project');
+  {  cSrcTREE_img_Project:=IDEImages.LoadImage(16, 'item_project');
     cSrcTREE_img_PrjFILE:=IDEImages.LoadImage(16, 'menu_project_viewsource');
     //---
-   _CRT_img4Project__isLoaded_:=TRUE;
+   _CRT_img4Project__isLoaded_:=TRUE;  }
 end;
 
 //------------------------------------------------------------------------------
@@ -244,11 +231,42 @@ end;
 
 
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------- картинки для узлов
+{todo: подумать про кешированое индексов картинок}
+
+// загрузка картинки и получение её индекса
+function _do_getIdxImj4IdeImages_(const fName:string):integer;
+begin
+    {$if (01080000<=lcl_fullversion)}
+        result:=IDEImages.LoadImage(fName,16);
+    {$elseIf}
+        result:=IDEImages.LoadImage(16,fName);
+    {$endIf}
+end;
+
+const
+   // Корневые узлы
+  _cImgName__Package_='pkg_installed';
+  _cImgName__PckFILE_='item_package';
+  _cImgName__Project_='item_project';
+  _cImgName__PrjFILE_='menu_project_viewsource';
+   // Директории
+  _cImgName__BaseDIR_='laz_open';
+  _cImgName__SrchPTH_='pkg_files';
+  _cImgName__SnglDIR_='folder';
+   // Файлы
+  _cImgName__file_        ='pkg_text';
+  _cImgName__file_src_    ='pkg_unit';
+  _cImgName__file_regUNIT_='pkg_registerunit';
+  _cImgName__file_LFM_    ='pkg_lfm';
+  _cImgName__file_LRS_    ='pkg_lrs';
+  _cImgName__file_Include_='pkg_include';
+  _cImgName__file_Issues_ ='pkg_issues';
+  _cImgName__file_BINARY_ ='pkg_binary';
 
 function tCmp_CopyRAST_Tree._item_gImj_(const item:tSrcTree_item):integer;
 begin
-    result:=-1;//cSrcTREE_img_file;
+    result:=-1;
     //---
     if item is tSrcTree_ROOT then begin // "Корневой УЗЕЛ"
        if item is tSrcTree_Root4Package then result:=_do_getIdxImj4IdeImages_(_cImgName__Package_)
@@ -261,46 +279,34 @@ begin
        else
         if item is tSrcTree_Main4Project then result:=_do_getIdxImj4IdeImages_(_cImgName__PrjFILE_)
     end
-   else // остальное
+   else
+    if item is tSrcTree_BASE then begin // БАЗОВый путь
+       result:=_do_getIdxImj4IdeImages_(_cImgName__BaseDIR_);
+    end
+   else
     if item is tSrcTree_fsFLDR then begin // элемент ФайловойСистемы ПАПКА
-        if item is tSrcTree_BASE then result:=_do_getIdxImj4IdeImages_(_cImgName__BaseDIR_)
-        else begin
-            if (tSrcTree_fsFLDR(item).inSearchPATHs=[])
-                then result:=_do_getIdxImj4IdeImages_(_cImgName__SnglDIR_)
-                else result:=_do_getIdxImj4IdeImages_(_cImgName__SrchPTH_);
-        end
+        if (tSrcTree_fsFLDR(item).inSearchPATHs=[])
+        then result:=_do_getIdxImj4IdeImages_(_cImgName__SnglDIR_)  // просто папка
+        else result:=_do_getIdxImj4IdeImages_(_cImgName__SrchPTH_); // путь поиска
+    end
+   else
+    if item is tSrcTree_fsFILE then begin // некий отдельно стоящий ФАЙЛ
+        case tSrcTree_fsFILE(item).fileKIND of
+            {todo: function TPackageEditorForm.OnTreeViewGetImageIndex(Str: String; Data: TObject; var AIsEnabled: Boolean): Integer; }
+            pftUnit:        result:=_do_getIdxImj4IdeImages_(_cImgName__file_src_);
+            pftVirtualUnit: result:=_do_getIdxImj4IdeImages_(_cImgName__file_src_);
+            pftMainUnit:    result:=_do_getIdxImj4IdeImages_(_cImgName__file_regUNIT_);
+            pftLFM:         result:=_do_getIdxImj4IdeImages_(_cImgName__file_LFM_);
+            pftLRS:         result:=_do_getIdxImj4IdeImages_(_cImgName__file_LRS_);
+            pftInclude:     result:=_do_getIdxImj4IdeImages_(_cImgName__file_Include_);
+            pftIssues:      result:=_do_getIdxImj4IdeImages_(_cImgName__file_Issues_);
+            pftBinary:      result:=_do_getIdxImj4IdeImages_(_cImgName__file_BINARY_);
+            else            result:=_do_getIdxImj4IdeImages_(_cImgName__file_);
+        end;
     end;
-    {if item is _tStcTree_item_fsNode_ then begin // элемент ФайловойСистемы
-        if item is _tSrcTree_item_fsNodeFLDR_ then begin
-            if item is tSrcTree_BASE then result:=cSrcTREE_img_BaseDIR
-           else
-            if item is tSrcTree_fsFLDR then begin
-                if (tSrcTree_fsFLDR(item).inSearchPATHs=[])
-                then result:=cSrcTREE_img_SnglDIR
-                else result:=cSrcTREE_img_SrchPTH;
-            end;
-        end
-       {else
-        if item is _tSrcTree_item_fsNodeFILE_ then begin
-            if item is tSrcTree_fsFILE then begin
-                case tSrcTree_fsFILE(item).fileKIND of
-                  pftUnit:        result:=cSrcTREE_img_file_src;
-                  pftVirtualUnit: result:=cSrcTREE_img_file_src;
-                  pftMainUnit:    result:=cSrcTREE_img_file_REG;
-                  pftLFM:         result:=cSrcTREE_img_file_LFM;
-                  pftLRS:         result:=cSrcTREE_img_file_LRS;
-                  pftInclude:     result:=cSrcTREE_img_file_Inc;
-                  pftIssues:      result:=cSrcTREE_img_file_Issues;
-                  pftText:        result:=cSrcTREE_img_file_txt;
-                  pftBinary:      result:=cSrcTREE_img_file_BIN;
-                  else            result:=cSrcTREE_img_file;
-                end;
-            end
-            else result:=cSrcTREE_img_file;
-            {todo:}
-        end }
-    end; }
 end;
+
+//------------------------------------------------------------------------------
 
 function tCmp_CopyRAST_Tree._item_hint_(const item:tSrcTree_item):string;
 begin
@@ -312,7 +318,13 @@ end;
 function tCmp_CopyRAST_Tree._item2TREE_(const prnt:TTreeNode; const item:tSrcTree_item):tTreeNode;
 var tmp:tSrcTree_item;
 begin {todo: уйти от рекурсии?}
-    result:=SELF.Items.AddChildObject(prnt,inttostr(_item_gImj_(item))+' '+item.ItemNAME,item);
+    result:=SELF.Items.AddChildObject(prnt,item.ItemNAME,item);
+    {$ifOpt D+}
+        result.Text:='i:'+inttostr(_item_gImj_(item))+' '+result.Text;
+        if item is tSrcTree_fsFILE then begin
+            result.Text:='f:'+inttostr(integer(tSrcTree_fsFILE(item).fileKIND))+' '+result.Text;
+        end;
+    {$endIf}
     //---
     result.SelectedIndex:=_item_gImj_(item);
     result.ImageIndex   := result.SelectedIndex;
