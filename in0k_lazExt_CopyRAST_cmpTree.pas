@@ -239,7 +239,7 @@ function _do_getIdxImj4IdeImages_(const fName:string):integer;
 begin
     {$if (01080000<=lcl_fullversion)}
         result:=IDEImages.LoadImage(fName,16);
-    {$elseIf}
+    {$else}
         result:=IDEImages.LoadImage(16,fName);
     {$endIf}
 end;
