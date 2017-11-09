@@ -2,13 +2,45 @@ unit in0k_lazExt_CopyRAST_cmpTree;
 
 {$mode objfpc}{$H+}
 
+
 interface
 
+{$i in0k_lazIdeSRC_SETTINGs.inc} //< настройки компанента-Расширения.
+//< Можно смело убирать, так как будеть работать только в моей специальной
+//< "системе имен и папок" `in0k_LazExt_..`.
+
+
+{$ifDef in0k_lazExt_CopyRAST_cmpTree-DEBUG}
+    // доп инфа в Назавнии узла
+    {.$define _dbg_nodeText__imgIndex_}
+    {.$define _dbg_nodeText__fileKind_}
+    // доп инфа в HINT
+    {$define _dbg_nodeHint__itemText_}
+    {$define _dbg_nodeHint__imgIndex_}
+    {$define _dbg_nodeHint__fileKind_}
+{$endIf}
+
+
+{$ifDef _dbg_nodeText__fileKind_}
+    {$define _use_typinfo_}
+{$endIf}
+{$ifDef _dbg_nodeHint__fileKind_}
+    {$define _use_typinfo_}
+{$endIf}
+
+
 uses Controls, ComCtrls, Forms,
+
+
+     {$ifDef _use_typinfo_}typinfo,{$endIf}
 
      LCLVersion,
      PackageIntf,
      IDEImagesIntf,
+
+
+
+
 
     in0k_lazIdeSRC_srcTree_CORE_item,
    // in0k_lazIdeSRC_srcTree_CORE_itemFileSystem,
@@ -46,9 +78,12 @@ type
     procedure _root_set_(const newRoot:tSrcTree_ROOT);
     function  _root_get_:tSrcTree_ROOT;
   protected
-
+    function _item_text_(const item:tSrcTree_item):string;
     function _item_hint_(const item:tSrcTree_item):string;
     function _item_gImj_(const item:tSrcTree_item):integer;
+
+
+
 
     function _item2TREE_(const prnt:TTreeNode; const item:tSrcTree_item):tTreeNode;
     //function _nodeSetUP_(const prnt:TTreeNode; const item:tSrcTree_item):tTreeNode;
@@ -80,6 +115,7 @@ var
   cSrcTREE_img_file_src:integer; // исходный код
   cSrcTREE_img_file_REG:integer;
   cSrcTREE_img_file_LFM:integer;
+
   cSrcTREE_img_file_LRS:integer;
   cSrcTREE_img_file_Inc:integer;
   cSrcTREE_img_file_Issues:integer;
@@ -308,24 +344,40 @@ end;
 
 //------------------------------------------------------------------------------
 
+function tCmp_CopyRAST_Tree._item_text_(const item:tSrcTree_item):string;
+begin
+    result:=item.ItemNAME;
+    {$ifDef _dbg_nodeText__imgIndex_}
+        result:='{imgIndex:'+inttostr(_item_gImj_(item))+'}'+result;
+    {$endIf}
+    {$ifDef _dbg_nodeText__fileKind_}
+        result:='{fileKIND:'+GetEnumName(TypeInfo(TPkgFileType), integer(tSrcTree_fsFILE(item).fileKIND))+'} '+result;
+    {$endIf}
+end;
+
 function tCmp_CopyRAST_Tree._item_hint_(const item:tSrcTree_item):string;
 begin
     result:=item.ItemHINT;
+    {$ifDef _dbg_nodeHint__itemText_}
+        result:=result+LineEnding+'{itemText:'+item.ItemTEXT+'}';
+    {$endIf}
+    {$ifDef _dbg_nodeHint__imgIndex_}
+        result:=result+LineEnding+'{imgIndex:'+inttostr(_item_gImj_(item))+'}';
+    {$endIf}
+    {$ifDef _dbg_nodeHint__fileKind_}
+        result:=result+LineEnding+'{fileKIND:'+GetEnumName(TypeInfo(TPkgFileType), integer(tSrcTree_fsFILE(item).fileKIND))+'}';
+    {$endIf}
 end;
 
 //------------------------------------------------------------------------------
 
+
+
 function tCmp_CopyRAST_Tree._item2TREE_(const prnt:TTreeNode; const item:tSrcTree_item):tTreeNode;
 var tmp:tSrcTree_item;
 begin {todo: уйти от рекурсии?}
-    result:=SELF.Items.AddChildObject(prnt,item.ItemNAME,item);
-    {$ifOpt D+}
-        result.Text:='i:'+inttostr(_item_gImj_(item))+' '+result.Text;
-        if item is tSrcTree_fsFILE then begin
-            result.Text:='f:'+inttostr(integer(tSrcTree_fsFILE(item).fileKIND))+' '+result.Text;
-        end;
-    {$endIf}
-    //---
+    result:=SELF.Items.AddChildObject(prnt,'',item);
+    result.Text         :=_item_text_(item);
     result.SelectedIndex:=_item_gImj_(item);
     result.ImageIndex   := result.SelectedIndex;
     //---
