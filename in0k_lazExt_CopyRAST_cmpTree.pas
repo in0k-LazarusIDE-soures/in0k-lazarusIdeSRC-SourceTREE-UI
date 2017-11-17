@@ -273,11 +273,15 @@ end;
 // загрузка картинки и получение её индекса
 function _do_getIdxImj4IdeImages_(const fName:string):integer;
 begin
-    {$if (01080000<=lcl_fullversion)}
-        result:=IDEImages.LoadImage(fName,16);
-    {$else}
-        result:=IDEImages.LoadImage(16,fName);
-    {$endIf}
+    try
+      {$if (01080000<=lcl_fullversion)}
+          result:=IDEImages.LoadImage(fName,16);
+      {$else}
+          result:=IDEImages.LoadImage(16,fName);
+      {$endIf}
+    except
+      result:=-1;
+    end;
 end;
 
 const
