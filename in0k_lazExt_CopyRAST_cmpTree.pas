@@ -43,7 +43,9 @@ uses Controls, ComCtrls, Forms,
 
 
     in0k_lazIdeSRC_srcTree_CORE_item,
-   // in0k_lazIdeSRC_srcTree_CORE_itemFileSystem,
+    in0k_lazIdeSRC_srcTree_4Package,
+
+     // in0k_lazIdeSRC_srcTree_CORE_itemFileSystem,
     in0k_lazIdeSRC_srcTree_item_Globals,
     in0k_lazIdeSRC_srcTree_item_fsFolder,
     in0k_lazIdeSRC_srcTree_item_fsFile,
