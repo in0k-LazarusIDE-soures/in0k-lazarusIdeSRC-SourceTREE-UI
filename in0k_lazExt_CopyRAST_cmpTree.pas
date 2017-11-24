@@ -98,6 +98,9 @@ type
     destructor DESTROY; override;
   public
     procedure Clear;
+  public
+    procedure Select(const item:tSrcTree_item);
+    function  SelectedITEM:tSrcTree_item;
   end;
 
 var
@@ -418,6 +421,28 @@ begin
        _nodeOnHint_:=nil;
         Application.CancelHint;
 		end;
+end;
+
+//------------------------------------------------------------------------------
+
+procedure tCmp_CopyRAST_Tree.Select(const item:tSrcTree_item);
+var i:integer;
+begin
+    ClearSelection;
+    for i:=0 to self.Items.Count-1 do begin
+        if Items.Item[i].Data=pointer(Item) then begin
+            items[i].Selected:=TRUE;
+            Break;
+        end;
+    end;
+end;
+
+function tCmp_CopyRAST_Tree.SelectedITEM:tSrcTree_item;
+begin
+    result:=tSrcTree_item(tObject(Selected));
+    if Assigned(result) then begin
+        result:=tSrcTree_item(tObject(TTreeNode(tObject(result)).Data));
+    end;
 end;
 
 initialization
