@@ -28,6 +28,9 @@ interface
     {$define _use_typinfo_}
 {$endIf}
 
+{$ifDef in0k_lazExt_CopyRAST_cmpTree-UseIMG}
+    {$define _useImg_}
+{$endIf}
 
 uses Controls, ComCtrls, Forms,
 
@@ -82,7 +85,9 @@ type
   protected
     function _item_text_(const item:tSrcTree_item):string;
     function _item_hint_(const item:tSrcTree_item):string;
+    {$ifDef _useImg_}
     function _item_gImj_(const item:tSrcTree_item):integer;
+    {$endIf}
 
 
 
@@ -309,6 +314,8 @@ const
   _cImgName__file_Issues_ ='pkg_issues';
   _cImgName__file_BINARY_ ='pkg_binary';
 
+
+{$ifDef _useImg_}
 function tCmp_CopyRAST_Tree._item_gImj_(const item:tSrcTree_item):integer;
 begin
     result:=-1;
@@ -350,6 +357,7 @@ begin
         end;
     end;
 end;
+{$endIf}
 
 //------------------------------------------------------------------------------
 
@@ -387,7 +395,9 @@ var tmp:tSrcTree_item;
 begin {todo: уйти от рекурсии?}
     result:=SELF.Items.AddChildObject(prnt,'',item);
     result.Text         :=_item_text_(item);
+    {$ifDef _useImg_}
     result.SelectedIndex:=_item_gImj_(item);
+    {$endIf}
     result.ImageIndex   := result.SelectedIndex;
     //---
     tmp:=item.ItemCHLD;
