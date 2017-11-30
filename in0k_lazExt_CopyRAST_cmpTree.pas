@@ -80,8 +80,8 @@ type
 
   protected
    _root_:tSrcTree_item;
-    procedure _root_set_(const newRoot:tSrcTree_ROOT);
-    function  _root_get_:tSrcTree_ROOT;
+    procedure _root_set_(const newRoot:tSrcTree_item);
+    function  _root_get_:tSrcTree_item;
   protected
     function _item_text_(const item:tSrcTree_item):string;
     function _item_hint_(const item:tSrcTree_item):string;
@@ -97,7 +97,7 @@ type
 
 
   public
-    property Root:tSrcTree_ROOT read _root_get_ write _root_set_;
+    property Root:tSrcTree_item read _root_get_ write _root_set_;
   public
     constructor Create(AnOwner: TComponent); override;
     destructor DESTROY; override;
@@ -238,11 +238,11 @@ begin
 end;
 
 destructor tCmp_CopyRAST_Tree.DESTROY;
-var tmp:tSrcTree_item;
+//var tmp:tSrcTree_item;
 begin
-    tmp:=_root_;
+//    tmp:=_root_;
     Clear;
-    if Assigned(tmp) then tmp.FREE;
+//    if Assigned(tmp) then tmp.FREE;
     inherited;
 end;
 
@@ -254,7 +254,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tCmp_CopyRAST_Tree._root_set_(const newRoot:tSrcTree_ROOT);
+procedure tCmp_CopyRAST_Tree._root_set_(const newRoot:tSrcTree_item);
 begin
     self.BeginUpdate;
     //---
@@ -267,7 +267,7 @@ begin
     self.EndUpdate;
 end;
 
-function tCmp_CopyRAST_Tree._root_get_:tSrcTree_ROOT;
+function tCmp_CopyRAST_Tree._root_get_:tSrcTree_item;
 begin
     {todo: это ВВРЕМЕННАЯ проверка, тут что-то другое надо, для аозможности ГРУПП проектов}
     {$ifOpt D+}Assert((not Assigned(_root_)) or (Assigned(_root_)and(_root_ is tSrcTree_ROOT)),'_root_ NOT tSrcTree_ROOT');{$endIf}
