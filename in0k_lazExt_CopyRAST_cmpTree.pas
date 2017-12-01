@@ -238,11 +238,8 @@ begin
 end;
 
 destructor tCmp_CopyRAST_Tree.DESTROY;
-//var tmp:tSrcTree_item;
 begin
-//    tmp:=_root_;
     Clear;
-//    if Assigned(tmp) then tmp.FREE;
     inherited;
 end;
 
