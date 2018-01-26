@@ -80,7 +80,7 @@ type
 
   protected
    _root_:tSrcTree_item;
-    procedure _root_set_(const newRoot:tSrcTree_item);
+    procedure _root_set_(const newRoot:tSrcTree_item); virtual;
     function  _root_get_:tSrcTree_item;
   protected
     function _item_text_(const item:tSrcTree_item):string;
@@ -259,8 +259,8 @@ begin
        _root_:=newRoot;
         if Assigned(_root_) then begin
            _item2TREE_(nil,_root_)
-				end;
-		//---
+        end;
+    //---
     self.EndUpdate;
 end;
 
