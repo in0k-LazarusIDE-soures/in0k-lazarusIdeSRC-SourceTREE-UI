@@ -80,7 +80,7 @@ type
 
   protected
    _root_:tSrcTree_item;
-    procedure _root_set_(const newRoot:tSrcTree_item); virtual;
+    procedure _root_set_(const value:tSrcTree_item); virtual;
     function  _root_get_:tSrcTree_item;
   protected
     function _item_text_(const item:tSrcTree_item):string;
@@ -251,17 +251,19 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tCmp_CopyRAST_Tree._root_set_(const newRoot:tSrcTree_item);
+procedure tCmp_CopyRAST_Tree._root_set_(const value:tSrcTree_item);
 begin
-    self.BeginUpdate;
-    //---
+    if value<>_root_ then begin
+        self.BeginUpdate;
+        //---
         self.Items.Clear;
-       _root_:=newRoot;
+       _root_:=value;
         if Assigned(_root_) then begin
            _item2TREE_(nil,_root_)
         end;
-    //---
-    self.EndUpdate;
+        //---
+        self.EndUpdate;
+    end;
 end;
 
 function tCmp_CopyRAST_Tree._root_get_:tSrcTree_item;
